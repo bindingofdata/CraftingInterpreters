@@ -14,11 +14,11 @@ public class GenerateAst {
         }
         String outputDir = args[0];
         
-        defineAst(outputDir, "Expr", Arrays.asList(
-            "Binary     : Expr left, Token operator, Expr right",
-            "Grouping   : Expr expression",
+        defineAst(outputDir, "Expression", Arrays.asList(
+            "Binary     : Expression left, Token operator, Expression right",
+            "Grouping   : Expression expression",
             "Literal    : Object value",
-            "Unary      : Token operator, Expr right"
+            "Unary      : Token operator, Expression right"
         ));
     }
 

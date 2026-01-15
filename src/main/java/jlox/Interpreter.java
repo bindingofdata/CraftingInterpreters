@@ -1,18 +1,18 @@
 package jlox;
 
-public class Interpreter implements Expr.Visitor<Object> {
+public class Interpreter implements Expression.Visitor<Object> {
     @Override
-    public Object visitLiteralExpr(Expr.Literal expr) {
-        return expr.value;
+    public Object visitLiteralExpr(Expression.Literal expression) {
+        return expression.value;
     }
 
     @Override
-    public Object visitUnaryExpr(Expr.Unary expr) {
-        Object right = evaluate(expr.right);
+    public Object visitUnaryExpr(Expression.Unary expression) {
+        Object right = evaluate(expression.right);
 
-        switch (expr.operator.type) {
+        switch (expression.operator.type) {
             case MINUS:
-                checkNumberOperand(expr.operator, right);
+                checkNumberOperand(expression.operator, right);
                 return -(double) right;
             case BANG:
                 return !isTruthy(right);
@@ -23,16 +23,16 @@ public class Interpreter implements Expr.Visitor<Object> {
     }
 
     @Override
-    public Object visitGroupingExpr(Expr.Grouping expr) {
-        return evaluate(expr.expression);
+    public Object visitGroupingExpr(Expression.Grouping expression) {
+        return evaluate(expression.expression);
     }
 
     @Override
-    public Object visitBinaryExpr(Expr.Binary expr) {
-        Object left = evaluate(expr.left);
-        Object right = evaluate(expr.right);
+    public Object visitBinaryExpr(Expression.Binary expression) {
+        Object left = evaluate(expression.left);
+        Object right = evaluate(expression.right);
 
-        switch (expr.operator.type) {
+        switch (expression.operator.type) {
             case PLUS:
                 if (left instanceof Double && right instanceof Double) {
                     return (double) left + (double) right;
@@ -40,27 +40,27 @@ public class Interpreter implements Expr.Visitor<Object> {
                 if (left instanceof String && right instanceof String) {
                     return (String) left + (String) right;
                 }
-                throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
+                throw new RuntimeError(expression.operator, "Operands must be two numbers or two strings.");
             case MINUS:
-                checkNumberOperands(expr.operator, left, right);
+                checkNumberOperands(expression.operator, left, right);
                 return (double) left - (double) right;
             case STAR:
-                checkNumberOperands(expr.operator, left, right);
+                checkNumberOperands(expression.operator, left, right);
                 return (double) left * (double) right;
             case SLASH:
-                checkNumberOperands(expr.operator, left, right);
+                checkNumberOperands(expression.operator, left, right);
                 return (double) left / (double) right;
             case GREATER:
-                checkNumberOperands(expr.operator, left, right);
+                checkNumberOperands(expression.operator, left, right);
                 return (double) left > (double) right;
             case GREATER_EQUAL:
-                checkNumberOperands(expr.operator, left, right);
+                checkNumberOperands(expression.operator, left, right);
                 return (double) left >= (double) right;
             case LESS:
-                checkNumberOperands(expr.operator, left, right);
+                checkNumberOperands(expression.operator, left, right);
                 return (double) left < (double) right;
             case LESS_EQUAL:
-                checkNumberOperands(expr.operator, left, right);
+                checkNumberOperands(expression.operator, left, right);
                 return (double) left <= (double) right;
             case BANG_EQUAL:
                 return !isEqual(left, right);
@@ -72,8 +72,8 @@ public class Interpreter implements Expr.Visitor<Object> {
         return null;
     }
     
-    private Object evaluate(Expr expr) {
-        return expr.accept(this);
+    private Object evaluate(Expression expression) {
+        return expression.accept(this);
     }
 
     private boolean isTruthy(Object object) {

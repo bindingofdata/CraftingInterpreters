@@ -13,7 +13,7 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    Expr parse() {
+    Expression parse() {
         try {
             return expression();
         } catch (ParseError error) {
@@ -21,80 +21,80 @@ public class Parser {
         }
     }
 
-    private Expr expression() {
+    private Expression expression() {
         return equality();
     }
 
-    private Expr equality() {
-        Expr expr = comparison();
+    private Expression equality() {
+        Expression expression = comparison();
         while (match(BANG_EQUAL, EQUAL_EQUAL))
         {
             Token operator = previous();
-            Expr right = comparison();
-            expr = new Expr.Binary(expr, operator, right);
+            Expression right = comparison();
+            expression = new Expression.Binary(expression, operator, right);
         }
 
-        return expr;
+        return expression;
     }
 
-    private Expr comparison(){
-        Expr expr = term();
+    private Expression comparison(){
+        Expression expression = term();
         while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
             Token operator = previous();
-            Expr right = term();
-            expr = new Expr.Binary(expr, operator, right);
+            Expression right = term();
+            expression = new Expression.Binary(expression, operator, right);
         }
 
-        return expr;
+        return expression;
     }
 
-    private Expr term() {
-        Expr expr = factor();
+    private Expression term() {
+        Expression expression = factor();
         while (match(MINUS, PLUS))
         {
             Token operator = previous();
-            Expr right = factor();
-            expr = new Expr.Binary(expr, operator, right);
+            Expression right = factor();
+            expression = new Expression.Binary(expression, operator, right);
         }
 
-        return expr;
+        return expression;
     }
 
-    private Expr factor() {
-        Expr expr = unary();
+    private Expression factor() {
+        Expression expression = unary();
         while (match(SLASH, STAR)) {
             Token operator = previous();
-            Expr right = unary();
-            expr = new Expr.Binary(expr, operator, right);
+            Expression right = unary();
+            expression = new Expression.Binary(expression, operator, right);
         }
 
-        return expr;
+        return expression;
     }
 
-    private Expr unary() {
+    private Expression unary() {
         if (match(BANG, MINUS)) {
             Token operator = previous();
-            Expr right = unary();
-            return new Expr.Unary(operator, right);
+            Expression right = unary();
+            return new Expression.Unary(operator, right);
         }
 
         return primary();
     }
 
-    private Expr primary()
+    private Expression primary()
     {
-        if (match(FALSE)) return new Expr.Literal(false);
-        if (match(TRUE)) return new Expr.Literal(true);
-        if (match(NIL)) return new Expr.Literal(null);
+        if (match(FALSE)) return new Expression.Literal(false);
+        if (match(TRUE)) return new Expression.Literal(true);
+        if (match(NIL)) return new Expression.Literal(null);
 
         if (match(NUMBER, STRING)) {
-            return new Expr.Literal(previous().literal);
+            return new Expression.Literal(previous().literal);
         }
 
         if (match(LEFT_PAREN)) {
-            Expr expr = expression();
+            Expression expression = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
-            return new Expr.Grouping(expr);
+            return new Expression.Grouping(expression);
         }
 
         throw error(peek(), "Expect expression.");

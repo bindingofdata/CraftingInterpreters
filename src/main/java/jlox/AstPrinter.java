@@ -1,39 +1,39 @@
 package jlox;
 
-public class AstPrinter implements Expr.Visitor<String> {
-    String print(Expr expr) {
-        return expr.accept(this);
+public class AstPrinter implements Expression.Visitor<String> {
+    String print(Expression expression) {
+        return expression.accept(this);
     }
 
     @Override
-    public String visitBinaryExpr(Expr.Binary expr) {
-        return parenthesize(expr.operator.lexeme, expr.left, expr.right);
+    public String visitBinaryExpr(Expression.Binary expression) {
+        return parenthesize(expression.operator.lexeme, expression.left, expression.right);
     }
 
     @Override
-    public String visitGroupingExpr(Expr.Grouping expr) {
-        return parenthesize("group", expr.expression);
+    public String visitGroupingExpr(Expression.Grouping expression) {
+        return parenthesize("group", expression.expression);
     }
 
     @Override
-    public String visitLiteralExpr(Expr.Literal expr) {
-        if (expr.value == null) return "nil";
-        return expr.value.toString();
+    public String visitLiteralExpr(Expression.Literal expression) {
+        if (expression.value == null) return "nil";
+        return expression.value.toString();
     } 
 
     @Override
-    public String visitUnaryExpr(Expr.Unary expr) {
-        return parenthesize(expr.operator.lexeme, expr.right);
+    public String visitUnaryExpr(Expression.Unary expression) {
+        return parenthesize(expression.operator.lexeme, expression.right);
     }
 
-    private String parenthesize(String name, Expr... exprs)
+    private String parenthesize(String name, Expression... exprs)
     {
         StringBuilder builder = new StringBuilder();
 
         builder.append("(").append(name);
-        for (Expr expr : exprs) {
+        for (Expression expression : exprs) {
             builder.append(" ");
-            builder.append(expr.accept(this));
+            builder.append(expression.accept(this));
         }
         builder.append(")");
 

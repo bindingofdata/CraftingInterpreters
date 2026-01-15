@@ -46,7 +46,7 @@ public class Lox {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        Expression expression = parser.parse();
 
         // stop on errors
         if (hadError) return;
